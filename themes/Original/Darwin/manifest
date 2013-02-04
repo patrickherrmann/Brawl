@@ -1,0 +1,16 @@
+# Darwin manifest
+
+# Include one less base (it starts on the table)
+# and no freezes
+
+HIT 4 BLUE
+SMASH 1 BLUE
+BLOCK 3 BLUE
+HIT 4 GREEN
+BLOCK 1 GREEN
+HIT 8 RED
+SMASH 1 RED
+BLOCK 3 RED
+BASE 2
+CLEAR 1
+PRESS 3
