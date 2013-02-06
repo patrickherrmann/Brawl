@@ -4,9 +4,7 @@
  */
 package brawllogic;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Stack;
@@ -69,9 +67,11 @@ public class BrawlLogic {
         System.out.println();
         
         for (Base base : game.getBases()) {
-            
-            for (Card card : base.getBaseStack(Player.LEFT).getStack()) {
-                System.out.print(" " + card.getShorthand());
+
+            Stack<Card> leftStack = base.getBaseStack(Player.LEFT).getStack();
+
+            for (int i = leftStack.size() - 1; i >= 0; i--) {
+                System.out.print(" " + leftStack.get(i).getShorthand());
             }
             
             System.out.print(" |" + base.getBaseCards().peek().getShorthand() + "|");
