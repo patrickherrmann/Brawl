@@ -1,13 +1,11 @@
 # Chris manifest
 
-# Include one less base (it starts on the table)
-# and no freezes
-
 HIT 7 BLUE
 BLOCK 2 BLUE
 HIT 5 GREEN
 BLOCK 2 GREEN
 HIT 8 RED
 BLOCK 2 RED
-BASE 3
+BASE 2
 CLEAR 2
+FREEZE 3

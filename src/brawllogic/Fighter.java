@@ -2,7 +2,10 @@ package brawllogic;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Stack;
 import java.util.StringTokenizer;
@@ -69,10 +72,30 @@ public class Fighter {
     }
     
     public void arrangeDeck(Player player, Stack<Card> deck) {
+        
+        List<Card> freezes = new ArrayList<Card>();
+        Card initialBase = null;
+        
+        Iterator<Card> iterator = deck.iterator();
+        
+        while (iterator.hasNext()) {
+            Card card = iterator.next();
+            if (card.getType() == CardType.FREEZE) {
+                iterator.remove();
+                freezes.add(card);
+            } else if (card.getType() == CardType.BASE) {
+                iterator.remove();
+                initialBase = card;
+            }
+        }
+        
+        if (initialBase == null)
+            throw new RuntimeException("There must be at least one base in the deck.");
+        
         Collections.shuffle(deck);
         
-        for (int i = 0; i < 3; i++)
-            deck.add(0, new Card(player, CardType.FREEZE));
+        deck.push(initialBase);
+        deck.addAll(0, freezes);
     }
     
     public Stack<Card> loadDeck(Player player) {

@@ -1,8 +1,5 @@
 # Bennett manifest
 
-# Include one less base (for starting)
-# and no freezes
-
 HIT 8 BLUE
 BLOCK 1 BLUE
 HIT 3 GREEN
@@ -12,3 +9,4 @@ BLOCK 1 RED
 BASE 6
 CLEAR 6
 PRESS 1
+FREEZE 3

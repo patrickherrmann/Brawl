@@ -21,26 +21,28 @@ public class ConsoleUI {
         Fighter bennett = new Fighter("Original", "Bennett");
         Fighter darwin = new Fighter("Original", "Darwin");
         
-        Map<Player, Fighter> playerMap = new EnumMap(Player.class);
-        
-        playerMap.put(Player.LEFT, bennett);
-        playerMap.put(Player.RIGHT, darwin);
-        
-        BrawlGame game = new BrawlGame(playerMap);
+        BrawlGame game = new TrainingModeGame(bennett, darwin);
         
         Scanner in = new Scanner(System.in);
         
-        while (!game.isGameOver()) {
-            printGameState(game);
+        while (!game.getState().isGameOver()) {
+            printGameState(game.getState());
+            Player current = game.getCurrentPlayer();
+            if (current != null) {
+                System.out.println(game.getState().getFighter(current).getName() + " to play:");
+                System.out.println();
+            }
             System.out.print("  >  ");
             try {
                 handleInput(game, in.nextLine());
-            } catch (GameplayException ex) {
+            } catch (IllegalMoveException ex) {
+                System.out.println();
+                System.out.print(game.getState().getFighter(ex.getPlayer()).getName() + ": ");
                 System.out.println(ex.getMessage());
             }
         }
         
-        Player winner = game.getWinner();
+        Player winner = game.getState().getWinner();
         
         if (winner == null) {
             System.out.println("Tie game!");
@@ -49,7 +51,7 @@ public class ConsoleUI {
         }
     }
     
-    private static void printGameState(BrawlGame game) {
+    private static void printGameState(GameState game) {
         
         System.out.println();
         
@@ -82,7 +84,7 @@ public class ConsoleUI {
         System.out.println();
     }
     
-    private static void handleInput(BrawlGame game, String input) throws GameplayException {
+    private static void handleInput(BrawlGame game, String input) throws IllegalMoveException {
         
         BasePosition bp;
         Player s;
