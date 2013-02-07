@@ -5,7 +5,7 @@ import java.util.Random;
 /**
  * @author Patrick Herrmann
  */
-public class TrainingModeGame extends BrawlGame {
+public final class TrainingModeGame extends BrawlGame {
     
     private Player currentPlayer;
     private boolean hasDrawn = false;

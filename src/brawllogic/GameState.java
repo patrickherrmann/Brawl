@@ -9,7 +9,7 @@ import java.util.Stack;
 /**
  * @author Patrick Herrmann
  */
-public class GameState {
+public final class GameState {
     
     private List<Base> bases = new LinkedList<Base>();
     private Map<Player, Fighter> fighters;

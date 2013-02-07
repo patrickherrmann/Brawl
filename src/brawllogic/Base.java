@@ -7,7 +7,7 @@ import java.util.Stack;
 /**
  * @author Patrick Herrmann
  */
-public class Base {
+public final class Base {
     
     private Map<Player, BaseStack> baseStacks = new EnumMap(Player.class);
     private Stack<Card> baseCards = new Stack<Card>();

@@ -13,7 +13,7 @@ import java.util.StringTokenizer;
 /**
  * @author Patrick Herrmann
  */
-public class Fighter {
+public final class Fighter {
     
     private String theme;
     private String name;

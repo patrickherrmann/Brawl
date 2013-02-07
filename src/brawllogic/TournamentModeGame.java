@@ -3,7 +3,7 @@ package brawllogic;
 /**
  * @author Patrick Herrmann
  */
-public class TournamentModeGame extends BrawlGame {
+public final class TournamentModeGame extends BrawlGame {
     
     public TournamentModeGame(Fighter leftFighter, Fighter rightFighter) {
         super(leftFighter, rightFighter);

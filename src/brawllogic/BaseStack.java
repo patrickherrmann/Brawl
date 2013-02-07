@@ -5,7 +5,7 @@ import java.util.Stack;
 /**
  * @author Patrick Herrmann
  */
-public class BaseStack {
+public final class BaseStack {
     
     private CardColor color = CardColor.NONE;
     private Stack<Card> stack = new Stack<Card>();

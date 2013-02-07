@@ -3,7 +3,7 @@ package brawllogic;
 /**
  * @author Patrick Herrmann
  */
-public class IllegalMoveException extends Exception {
+public final class IllegalMoveException extends Exception {
     
     private Player player;
     

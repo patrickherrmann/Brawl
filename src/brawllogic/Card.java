@@ -3,7 +3,7 @@ package brawllogic;
 /**
  * @author Patrick Herrmann
  */
-public class Card {
+public final class Card {
     
     private CardType type;
     private CardColor color;
