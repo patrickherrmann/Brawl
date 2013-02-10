@@ -15,6 +15,29 @@ import java.util.StringTokenizer;
  */
 public final class Fighter {
     
+    public static List<String> getAvailableThemes() {
+        
+        return listDirectories("themes");
+    }
+    
+    public static List<String> getAvailableFighters(String theme) {
+        
+        return listDirectories("themes/" + theme);
+    }
+    
+    private static List<String> listDirectories(String directory) {
+        
+        List<String> subs = new ArrayList<String>();
+        
+        File dir = new File(directory);
+        
+        for (File file : dir.listFiles())
+            if (file.isDirectory())
+                subs.add(file.getName());
+        
+        return subs;
+    }
+    
     private String theme;
     private String name;
     
@@ -71,7 +94,7 @@ public final class Fighter {
             deck.push(new Card(owner, cardType, cardColor));
     }
     
-    public void arrangeDeck(Player player, Stack<Card> deck) {
+    private void arrangeDeck(Stack<Card> deck) {
         
         List<Card> freezes = new ArrayList<Card>();
         Card initialBase = null;
@@ -121,7 +144,7 @@ public final class Fighter {
             throw new RuntimeException(ex.getMessage());
         }
         
-        arrangeDeck(player, deck);
+        arrangeDeck(deck);
         
         return deck;
     }

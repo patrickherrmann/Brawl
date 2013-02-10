@@ -25,12 +25,14 @@ public final class GameState {
         
         for (Player player : Player.values()) {
             decks.put(player, fighters.get(player).loadDeck(player));
-            bases.add(new Base(decks.get(player).pop()));
+            Card topCardBase = decks.get(player).pop();
+            topCardBase.flip();
+            bases.add(new Base(topCardBase));
             discards.put(player, new Stack());
         }
     }
     
-    public void draw(Player player) throws IllegalMoveException {
+    void draw(Player player) throws IllegalMoveException {
         
         if (player == null)
             throw new IllegalArgumentException("Player cannot be null");
@@ -40,7 +42,11 @@ public final class GameState {
         if (deck.isEmpty())
             throw new IllegalMoveException("No cards left to draw.", player);
         
-        discards.get(player).push(deck.pop());
+        Card topCard = deck.pop();
+        
+        topCard.flip();
+        
+        discards.get(player).push(topCard);
     }
     
     private int getBaseIndex(BasePosition basePosition) throws GameplayException {
@@ -80,7 +86,7 @@ public final class GameState {
         bases.remove(baseIndex);
     }
     
-    private void tryPlayBase(BasePosition basePosition, Card card) throws GameplayException {
+    void tryPlayBase(BasePosition basePosition, Card card) throws GameplayException {
         
         if (bases.size() == 3)
             throw new GameplayException("A maximum of three bases can be in play at once.");
@@ -98,7 +104,7 @@ public final class GameState {
         }
     }
     
-    private void tryPlayCard(BasePosition basePosition, Card card, Player side) throws GameplayException {
+    void tryPlayCard(BasePosition basePosition, Card card, Player side) throws GameplayException {
         
         if (card.getType() == CardType.BASE) {
             tryPlayBase(basePosition, card);
@@ -110,7 +116,7 @@ public final class GameState {
         }
     }
     
-    public void tryMove(Player player, BasePosition basePosition, Player side) throws IllegalMoveException {
+    void tryMove(Player player, BasePosition basePosition, Player side) throws IllegalMoveException {
         
         Stack<Card> discard = discards.get(player);
         

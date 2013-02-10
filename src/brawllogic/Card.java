@@ -8,11 +8,13 @@ public final class Card {
     private CardType type;
     private CardColor color;
     private Player owner;
+    private boolean faceUp;
     
     public Card(Player owner, CardType type) {
         this.owner = owner;
         this.type = type;
         this.color = CardColor.NONE;
+        faceUp = false;
     }
     
     public Card(Player owner, CardType type, CardColor color) {
@@ -51,5 +53,13 @@ public final class Card {
     public String getShorthand() {
         
         return color.getShorthand() + type.getShorthand();
+    }
+    
+    public boolean isFaceUp() {
+        return faceUp;
+    }
+    
+    public void flip() {
+        faceUp = !faceUp;
     }
 }

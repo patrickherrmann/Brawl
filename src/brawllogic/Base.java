@@ -23,7 +23,7 @@ public final class Base {
         baseCards.push(baseCard);
     }
     
-    public void tryMove(Player side, Card card) throws GameplayException {
+    void tryMove(Player side, Card card) throws GameplayException {
         
         if (side == null)
             throw new IllegalArgumentException("side cannot be null.");

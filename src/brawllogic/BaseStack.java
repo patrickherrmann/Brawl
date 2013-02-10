@@ -10,7 +10,7 @@ public final class BaseStack {
     private CardColor color = CardColor.NONE;
     private Stack<Card> stack = new Stack<Card>();
     
-    public void tryMove(Card card) throws GameplayException {
+    void tryMove(Card card) throws GameplayException {
         
         if (card.getType().getCategory() != CardCategory.STACKER)
             throw new GameplayException("This type of card cannot be stacked on either side of a base.");
