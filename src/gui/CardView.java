@@ -56,18 +56,18 @@ public class CardView extends GameObject {
 
             Graphics2D g = v.getGraphics();
 
-            //g.translate(centerPixel.x, centerPixel.y);
-            //g.rotate(-rotation);
+            g.translate(centerPixel.x, centerPixel.y);
+            g.rotate(-rotation);
 
             // draw the image
             g.setColor(card.isFaceUp() ? Color.LIGHT_GRAY : Color.DARK_GRAY);
-            g.fillRect(centerPixel.x - width / 2, centerPixel.y - height / 2, width, height);
+            g.fillRect(-width / 2,  -height / 2, width, height);
             g.setColor(Color.DARK_GRAY);
-            g.drawRect(centerPixel.x - width / 2, centerPixel.y - height / 2, width, height);
-            g.drawString(card.getShorthand(), centerPixel.x, centerPixel.y);
+            g.drawRect(-width / 2,  -height / 2, width, height);
+            g.drawString(card.getShorthand(), 0, 0);
 
-            //g.rotate(rotation);
-            //g.translate(-centerPixel.x, -centerPixel.y);
+            g.rotate(rotation);
+            g.translate(-centerPixel.x, -centerPixel.y);
             
         }
     }

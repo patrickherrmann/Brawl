@@ -110,16 +110,24 @@ public class GameView {
                 
                 for (int j = 0; j < baseStack.size(); j++) {
                     cv = cardViews.get(baseStack.get(j));
-                    cv.setPosition(offset * (3 + j), baseY);
+                    cv.setPosition(offset * (1.5 + j), baseY);
                     cv.setZIndex(zindex++);
                 }
             }
             
-            for (Card card : base.getBaseCards()) {
-                cv = cardViews.get(card);
+            pile = base.getBaseCards();
+            
+            cv = cardViews.get(pile.firstElement());
+            cv.setPosition(0, baseY);
+            cv.setRotation(Math.PI / 2 * (pile.firstElement().getOwner() == Player.LEFT ? -1 : 1));
+            cv.setZIndex(zindex++);
+            cv.setVisibility(true);
+            
+            for (int j = 1; j < pile.size(); j++) {
+                cv = cardViews.get(pile.get(j));
                 cv.setPosition(0, baseY);
+                cv.setRotation(Math.PI * -0.25);
                 cv.setZIndex(zindex++);
-                cv.setVisibility(true);
             }
         }
         
