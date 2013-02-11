@@ -161,6 +161,18 @@ public class GameFrame extends JFrame {
             try {
                 handleKeyType(ke.getKeyChar());
                 gameView.update();
+                
+                if (brawlGame.getState().isGameOver()) {
+                    Player winner = brawlGame.getState().getWinner();
+                    
+                    if (winner == null) {
+                        System.out.println("The game ends in a tie.");
+                    } else {
+                        System.out.println(winner + " player wins!");
+                    }
+                    System.exit(0);
+                }
+                
             } catch (IllegalMoveException e) {
                 System.out.print(brawlGame.getState().getFighter(e.getPlayer()).getName() + " (" + e.getPlayer() + "): ");
                 System.out.println(e.getMessage());
