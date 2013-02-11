@@ -107,7 +107,6 @@ public final class Fighter {
                 iterator.remove();
                 freezes.add(card);
             } else if (card.getType() == CardType.BASE) {
-                iterator.remove();
                 initialBase = card;
             }
         }
@@ -116,6 +115,8 @@ public final class Fighter {
             throw new RuntimeException("There must be at least one base in the deck.");
         
         Collections.shuffle(deck);
+        
+        deck.remove(initialBase);
         
         deck.push(initialBase);
         deck.addAll(0, freezes);

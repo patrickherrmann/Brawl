@@ -1,5 +1,6 @@
 package brawllogic;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +16,7 @@ public final class GameState {
     private Map<Player, Fighter> fighters;
     private Map<Player, Stack<Card>> decks = new EnumMap(Player.class);
     private Map<Player, Stack<Card>> discards = new EnumMap(Player.class);
+    private List<Card> cardsOutOfPlay = new ArrayList<Card>();
     
     public GameState(Map<Player, Fighter> fighters) {
         
@@ -68,7 +70,7 @@ public final class GameState {
         return basePosition.getIndex();
     }
     
-    private void tryClear(BasePosition basePosition) throws GameplayException {
+    private void tryClear(BasePosition basePosition, Card card) throws GameplayException {
         
         if (bases.size() == 1)
             throw new GameplayException("Cannot clear only base.");
@@ -82,6 +84,13 @@ public final class GameState {
         
         if (base.isFrozen())
             throw new GameplayException("Cannot clear a frozen base.");
+        
+        base.getBaseCards().push(card);
+        
+        cardsOutOfPlay.addAll(base.getBaseCards());
+        
+        for (Player player : Player.values())
+            cardsOutOfPlay.addAll(base.getBaseStack(player).getStack());
         
         bases.remove(baseIndex);
     }
@@ -109,7 +118,7 @@ public final class GameState {
         if (card.getType() == CardType.BASE) {
             tryPlayBase(basePosition, card);
         } else if (card.getType() == CardType.CLEAR) {
-            tryClear(basePosition);
+            tryClear(basePosition, card);
         } else {
             Base base = bases.get(getBaseIndex(basePosition));
             base.tryMove(side, card);
@@ -168,6 +177,10 @@ public final class GameState {
         return decks.get(player);
     }
     
+    public List<Card> getCardsOutOfPlay() {
+        return cardsOutOfPlay;
+    }
+    
     public Stack<Card> getDiscard(Player player) {
         return discards.get(player);
     }
@@ -178,5 +191,30 @@ public final class GameState {
     
     public List<Base> getBases() {
         return bases;
+    }
+    
+    public List<Card> getAllCardsInPlay() { // This includes cards yet to be drawn
+        
+        List<Card> allCards = new ArrayList<Card>();
+        
+        for (Stack<Card> deck : decks.values())
+            for (Card card : deck)
+                allCards.add(card);
+        
+        for (Stack<Card> discard : discards.values())
+            for (Card card : discard)
+                allCards.add(card);
+        
+        for (Base base : bases) {
+            
+            for (Card card : base.getBaseCards())
+                allCards.add(card);
+            
+            for (Player player : Player.values())
+                for (Card card : base.getBaseStack(player).getStack())
+                    allCards.add(card);
+        }
+        
+        return allCards;
     }
 }
