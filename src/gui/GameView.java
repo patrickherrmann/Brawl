@@ -1,7 +1,6 @@
 package gui;
 
 import brawllogic.Base;
-import brawllogic.BaseStack;
 import brawllogic.Card;
 import brawllogic.GameState;
 import brawllogic.Player;

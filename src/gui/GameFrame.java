@@ -162,7 +162,8 @@ public class GameFrame extends JFrame {
                 handleKeyType(ke.getKeyChar());
                 gameView.update();
             } catch (IllegalMoveException e) {
-                System.out.println(e);
+                System.out.print(brawlGame.getState().getFighter(e.getPlayer()).getName() + " (" + e.getPlayer() + "): ");
+                System.out.println(e.getMessage());
             }
         }
 
