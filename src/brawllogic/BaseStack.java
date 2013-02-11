@@ -38,6 +38,13 @@ public final class BaseStack {
                 if (stack.peek().getType() == CardType.BLOCK)
                     throw new GameplayException("This card cannot be played on a blocked pile.");
                 
+                if (stack.peek().getType() == CardType.PRESS) {
+                    
+                    if (card.getType() != CardType.HIT)
+                        throw new GameplayException("Only hits can be played on presses.");
+                    
+                }
+                
                 stack.push(card);
             }
         }
