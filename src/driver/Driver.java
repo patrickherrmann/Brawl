@@ -18,6 +18,7 @@ public class Driver {
         BrawlGame game = new TournamentModeGame(bennett, darwin);
         
         GameFrame gui = new GameFrame(game, 1280, 854);
+        gui.setVisible(true);
         ConsoleUI cui = new ConsoleUI(game);
         cui.start();
     }

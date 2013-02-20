@@ -29,8 +29,7 @@ public class ConsoleUI implements Observer {
             try {
                 handleInput(game, in.nextLine());
             } catch (IllegalMoveException ex) {
-                System.out.println();
-                System.out.print(game.getState().getFighter(ex.getPlayer()).getName() + ": ");
+                System.out.print(game.getState().getFighter(ex.getPlayer()).getName() + " (" + ex.getPlayer() + "): ");
                 System.out.println(ex.getMessage());
             }
         }

@@ -7,10 +7,8 @@ import animation.Scene;
 import animation.Viewport;
 import brawllogic.BasePosition;
 import brawllogic.BrawlGame;
-import brawllogic.Fighter;
 import brawllogic.IllegalMoveException;
 import brawllogic.Player;
-import brawllogic.TournamentModeGame;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -36,7 +34,6 @@ public class GameFrame extends JFrame {
         this.brawlGame = brawlGame;
         
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
         initializeAnimation(width, height);
     }
     
@@ -138,7 +135,6 @@ public class GameFrame extends JFrame {
                     System.out.println("Unrecognized command.");
                     return;
             }
-
 
             brawlGame.tryMove(p, bp, s);
     }
