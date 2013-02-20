@@ -5,12 +5,13 @@ import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 import java.util.Stack;
 
 /**
  * @author Patrick Herrmann
  */
-public final class GameState {
+public final class GameState extends Observable {
     
     private List<Base> bases = new LinkedList<Base>();
     private Map<Player, Fighter> fighters;
@@ -49,6 +50,9 @@ public final class GameState {
         topCard.flip();
         
         discards.get(player).push(topCard);
+        
+        setChanged();
+        notifyObservers();
     }
     
     private int getBaseIndex(BasePosition basePosition) throws GameplayException {
@@ -95,7 +99,7 @@ public final class GameState {
         bases.remove(baseIndex);
     }
     
-    void tryPlayBase(BasePosition basePosition, Card card) throws GameplayException {
+    private void tryPlayBase(BasePosition basePosition, Card card) throws GameplayException {
         
         if (bases.size() == 3)
             throw new GameplayException("A maximum of three bases can be in play at once.");
@@ -113,7 +117,7 @@ public final class GameState {
         }
     }
     
-    void tryPlayCard(BasePosition basePosition, Card card, Player side) throws GameplayException {
+    private void tryPlayCard(BasePosition basePosition, Card card, Player side) throws GameplayException {
         
         if (card.getType() == CardType.BASE) {
             tryPlayBase(basePosition, card);
@@ -136,6 +140,8 @@ public final class GameState {
         
         try {
             tryPlayCard(basePosition, card, side);
+            setChanged();
+            notifyObservers();
         } catch (GameplayException e) {
             discard.push(card);
             throw new IllegalMoveException(e.getMessage(), player);

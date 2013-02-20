@@ -11,28 +11,21 @@ import java.util.*;
  *
  * @author patrick
  */
-public class ConsoleUI {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        
-        Fighter bennett = new Fighter("Original", "Bennett");
-        Fighter darwin = new Fighter("Original", "Darwin");
-        
-        BrawlGame game = new TrainingModeGame(bennett, darwin);
-        
+public class ConsoleUI implements Observer {
+    
+    private BrawlGame game;
+    
+    public ConsoleUI(BrawlGame game) {
+        this.game = game;
+        game.getState().addObserver(this);
+        printGameState();
+    }
+    
+    public void start() {
         Scanner in = new Scanner(System.in);
         
         while (!game.getState().isGameOver()) {
-            printGameState(game.getState());
-            Player current = game.getCurrentPlayer();
-            if (current != null) {
-                System.out.println(game.getState().getFighter(current).getName() + " to play:");
-                System.out.println();
-            }
-            System.out.print("  >  ");
+            
             try {
                 handleInput(game, in.nextLine());
             } catch (IllegalMoveException ex) {
@@ -51,22 +44,22 @@ public class ConsoleUI {
         }
     }
     
-    private static void printGameState(GameState game) {
+    private void printGameState() {
         
         System.out.println();
         
         for (Player player : Player.values()) {
             
-            Stack<Card> discard = game.getDiscard(player);
+            Stack<Card> discard = game.getState().getDiscard(player);
             
             String active = discard.isEmpty() ? "<empty>" : discard.peek().getShorthand();
             
-            System.out.println(game.getFighter(player).getName() + ": " + active);
+            System.out.println(game.getState().getFighter(player).getName() + ": " + active);
         }
         
         System.out.println();
         
-        for (Base base : game.getBases()) {
+        for (Base base : game.getState().getBases()) {
 
             Stack<Card> leftStack = base.getBaseStack(Player.LEFT).getStack();
 
@@ -82,6 +75,13 @@ public class ConsoleUI {
             System.out.println();
         }
         System.out.println();
+        
+        Player current = game.getCurrentPlayer();
+        
+        if (current != null) {
+            System.out.println(game.getState().getFighter(current).getName() + " to play:");
+            System.out.println();
+        }
     }
     
     private static void handleInput(BrawlGame game, String input) throws IllegalMoveException {
@@ -164,8 +164,11 @@ public class ConsoleUI {
                 return;
         }
         
-        
         game.tryMove(p, bp, s);
-        
+    }
+
+    @Override
+    public void update(Observable o, Object o1) {
+        printGameState();
     }
 }

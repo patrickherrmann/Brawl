@@ -30,14 +30,6 @@ public class GameFrame extends JFrame {
     private GameView gameView;
     private JLabel canvas;
     
-    public static void main(String[] args) {
-        
-        Fighter bennett = new Fighter("Original", "Bennett");
-        Fighter darwin = new Fighter("Original", "Darwin");
-        
-        new GameFrame(new TournamentModeGame(bennett, darwin), 1280, 854);
-    }
-    
     public GameFrame(BrawlGame brawlGame, int width, int height) {
         super("Brawl");
         
@@ -55,8 +47,6 @@ public class GameFrame extends JFrame {
         
         for (GameObject obj : gameView.getCardViews())
             scene.add(obj);
-        
-        gameView.update();
         
         Viewport viewport = new Viewport(width, height);
         animator = new Animator(scene, 80);
@@ -160,7 +150,6 @@ public class GameFrame extends JFrame {
             
             try {
                 handleKeyType(ke.getKeyChar());
-                gameView.update();
                 
                 if (brawlGame.getState().isGameOver()) {
                     Player winner = brawlGame.getState().getWinner();

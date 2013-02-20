@@ -8,12 +8,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Stack;
 
 /**
  * @author Patrick Herrmann
  */
-public class GameView {
+public class GameView implements Observer {
     
     public static final int DECK_OFFSET = 500;
     public static final int CARD_WIDTH = 100;
@@ -28,14 +30,17 @@ public class GameView {
     
     public GameView(GameState gameState) {
         this.gameState = gameState;
+        gameState.addObserver(this);
         
         cardViews = new HashMap<Card, CardView>();
         
         for (Card card : gameState.getAllCardsInPlay())
             cardViews.put(card, new CardView(card, gameState.getFighter(card.getOwner())));
+        
+        updateView();
     }
     
-    public void update() { // Use mathematical coordinates, with origin at CENTER of the screen
+    private void updateView() { // Use mathematical coordinates, with origin at CENTER of the screen
         
         Stack<Card> pile;
         CardView cv;
@@ -143,5 +148,10 @@ public class GameView {
     
     public Collection<CardView> getCardViews() {
         return cardViews.values();
+    }
+
+    @Override
+    public void update(Observable o, Object o1) {
+        updateView();
     }
 }
