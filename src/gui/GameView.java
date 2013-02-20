@@ -107,9 +107,12 @@ public class GameView {
                 Stack<Card> baseStack = base.getBaseStack(side).getStack();
                 double offset = side == Player.LEFT ? -50 : 50;
                 
-                for (int j = 0; j < baseStack.size(); j++) {
+                int j = baseStack.size() - 3;
+                if (j < 0) j = 0;
+                
+                while (j < baseStack.size()) {
                     cv = cardViews.get(baseStack.get(j));
-                    cv.setPosition(offset * (1.5 + j), baseY);
+                    cv.setPosition(offset * (1.5 + j++), baseY);
                     cv.setZIndex(zindex++);
                 }
             }

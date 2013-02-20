@@ -60,7 +60,7 @@ public class GameFrame extends JFrame {
         
         Viewport viewport = new Viewport(width, height);
         animator = new Animator(scene, 80);
-        painter = new GamePainter(scene, viewport, 40);
+        painter = new GamePainter(scene, viewport, 30);
         canvas = new JLabel(new ImageIcon(viewport.getImage()));
         add(canvas);
         addKeyListener(new KeyHandler());
