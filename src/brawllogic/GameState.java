@@ -1,6 +1,7 @@
 package brawllogic;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.Stack;
 /**
  * @author Patrick Herrmann
  */
-public final class GameState extends Observable {
+public abstract class GameState extends Observable {
     
     private List<Base> bases = new LinkedList<Base>();
     private Map<Player, Fighter> fighters;
@@ -19,12 +20,11 @@ public final class GameState extends Observable {
     private Map<Player, Stack<Card>> discards = new EnumMap(Player.class);
     private List<Card> cardsOutOfPlay = new ArrayList<Card>();
     
-    public GameState(Map<Player, Fighter> fighters) {
+    protected GameState(Fighter left, Fighter right) {
         
-        if (fighters == null)
-            throw new IllegalArgumentException("fighters cannot be null.");
-        
-        this.fighters = fighters;
+        fighters = new EnumMap<Player, Fighter>(Player.class);
+        fighters.put(Player.LEFT, left);
+        fighters.put(Player.RIGHT, right);
         
         for (Player player : Player.values()) {
             decks.put(player, fighters.get(player).loadDeck(player));
@@ -34,8 +34,10 @@ public final class GameState extends Observable {
             discards.put(player, new Stack());
         }
     }
+
+    public abstract boolean canPlay(Player player);
     
-    void draw(Player player) throws IllegalMoveException {
+    public MoveAnalysis canDraw(Player player) {
         
         if (player == null)
             throw new IllegalArgumentException("Player cannot be null");
@@ -43,9 +45,13 @@ public final class GameState extends Observable {
         Stack<Card> deck = decks.get(player);
         
         if (deck.isEmpty())
-            throw new IllegalMoveException("No cards left to draw.", player);
+            return new MoveAnalysis(player, false, "No cards left to draw.");
         
-        Card topCard = deck.pop();
+        return new MoveAnalysis(player, true, "The player can draw.");
+    }
+    
+    public void draw(Player player) {
+        Card topCard = decks.get(player).pop();
         
         topCard.flip();
         
@@ -55,61 +61,75 @@ public final class GameState extends Observable {
         notifyObservers();
     }
     
-    private int getBaseIndex(BasePosition basePosition) throws GameplayException {
+    private int getBaseIndex(BasePosition basePosition) {
         
         if (bases.size() == 1) {
             
             if (basePosition != BasePosition.MID)
-                throw new GameplayException("There is no base on this row.");
+                return -1;
             
             return 0;
             
         } else if (bases.size() == 2) {
             
             if (basePosition == BasePosition.LOW)
-                throw new GameplayException("There is no base on this row.");
+                return -1;
             
         }
         
         return basePosition.getIndex();
     }
     
-    private void tryClear(BasePosition basePosition, Card card) throws GameplayException {
+    private GameplayAnalysis canClear(BasePosition basePosition) {
         
         if (bases.size() == 1)
-            throw new GameplayException("Cannot clear only base.");
+            return new GameplayAnalysis(false, "Cannot clear only base.");
         
         int baseIndex = getBaseIndex(basePosition);
+
+        if (baseIndex == -1)
+            return new GameplayAnalysis(false, "There is no base at the specified position");
         
         if (bases.size() == 3 && baseIndex == 1)
-            throw new GameplayException("Cannot clear middle base.");
+            return new GameplayAnalysis(false, "Cannot clear middle base.");
         
         Base base = bases.get(baseIndex);
         
         if (base.isFrozen())
-            throw new GameplayException("Cannot clear a frozen base.");
+            return new GameplayAnalysis(false, "Cannot clear a frozen base.");
         
-        base.getBaseCards().push(card);
-        
+        return new GameplayAnalysis(true, "The base in this position can be cleared");
+    }
+
+    private void clear(BasePosition basePosition, Card card) {
+
+        int baseIndex = getBaseIndex(basePosition);
+
+        Base base = bases.get(baseIndex);
+
+        cardsOutOfPlay.add(card);
         cardsOutOfPlay.addAll(base.getBaseCards());
-        
+
         for (Player player : Player.values())
             cardsOutOfPlay.addAll(base.getBaseStack(player).getStack());
-        
+
         bases.remove(baseIndex);
     }
     
-    private void tryPlayBase(BasePosition basePosition, Card card) throws GameplayException {
+    private GameplayAnalysis canPlayBase(BasePosition basePosition, Card card) {
         
         if (bases.size() == 3)
-            throw new GameplayException("A maximum of three bases can be in play at once.");
+            return new GameplayAnalysis(false, "A maximum of three bases can be in play at once.");
         
         if (basePosition == BasePosition.MID)
-            throw new GameplayException("Bases can only be added above or below existing bases.");
+            return new GameplayAnalysis(false, "Bases can only be added above or below existing bases.");
         
-        
+        return new GameplayAnalysis(true, "A base can be played in this position.");
+    }
+
+    private void playBase(BasePosition basePosition, Card card) {
         Base base = new Base(card);
-        
+
         if (basePosition == BasePosition.HIGH) {
             bases.add(0, base);
         } else {
@@ -117,35 +137,45 @@ public final class GameState extends Observable {
         }
     }
     
-    private void tryPlayCard(BasePosition basePosition, Card card, Player side) throws GameplayException {
+    private GameplayAnalysis canPlayCard(BasePosition basePosition, Card card, Player side) {
         
         if (card.getType() == CardType.BASE) {
-            tryPlayBase(basePosition, card);
+            return canPlayBase(basePosition, card);
         } else if (card.getType() == CardType.CLEAR) {
-            tryClear(basePosition, card);
+            return canClear(basePosition);
         } else {
             Base base = bases.get(getBaseIndex(basePosition));
-            base.tryMove(side, card);
+            return base.canPlay(side, card);
+        }
+    }
+
+    private void playCard(BasePosition basePosition, Card card, Player side) {
+        
+        if (card.getType() == CardType.BASE) {
+            playBase(basePosition, card);
+        } else if (card.getType() == CardType.CLEAR) {
+            clear(basePosition, card);
+        } else {
+            Base base = bases.get(getBaseIndex(basePosition));
+            base.play(side, card);
         }
     }
     
-    void tryMove(Player player, BasePosition basePosition, Player side) throws IllegalMoveException {
-        
+    public MoveAnalysis isLegal(Move move)  {
+
+        Player player = move.getPlayer();
         Stack<Card> discard = discards.get(player);
         
         if (discard.isEmpty())
-            throw new IllegalMoveException("You must draw a card before you can play.", player);
+            return new MoveAnalysis(player, false, "You must draw a card before you can play.");
         
-        Card card = discard.pop();
-        
-        try {
-            tryPlayCard(basePosition, card, side);
-            setChanged();
-            notifyObservers();
-        } catch (GameplayException e) {
-            discard.push(card);
-            throw new IllegalMoveException(e.getMessage(), player);
-        }
+        return new MoveAnalysis(player, canPlayCard(move.getBasePosition(), discard.peek(), move.getSide()));
+    }
+
+    public void move(Move move) {
+        playCard(move.getBasePosition(), discards.get(move.getPlayer()).pop(), move.getSide());
+        setChanged();
+        notifyObservers();
     }
     
     public boolean isGameOver() {
@@ -179,16 +209,16 @@ public final class GameState extends Observable {
         return leftScore > rightScore ? Player.LEFT : Player.RIGHT;
     }
     
-    public Stack<Card> getDeck(Player player) {
-        return decks.get(player);
+    public List<Card> getDeck(Player player) {
+        return Collections.unmodifiableList(decks.get(player));
     }
     
     public List<Card> getCardsOutOfPlay() {
-        return cardsOutOfPlay;
+        return Collections.unmodifiableList(cardsOutOfPlay);
     }
     
-    public Stack<Card> getDiscard(Player player) {
-        return discards.get(player);
+    public List<Card> getDiscard(Player player) {
+        return Collections.unmodifiableList(discards.get(player));
     }
     
     public Fighter getFighter(Player player) {
@@ -196,7 +226,7 @@ public final class GameState extends Observable {
     }
     
     public List<Base> getBases() {
-        return bases;
+        return Collections.unmodifiableList(bases);
     }
     
     public List<Card> getAllCardsInPlay() { // This includes cards yet to be drawn

@@ -13,28 +13,30 @@ import java.util.*;
  */
 public class ConsoleUI implements Observer {
     
-    private BrawlGame game;
+    private Controller controller;
     
-    public ConsoleUI(BrawlGame game) {
-        this.game = game;
-        game.getState().addObserver(this);
+    public ConsoleUI(Controller controller) {
+        this.controller = controller;
+        controller.getGameState().addObserver(this);
         printGameState();
     }
     
     public void start() {
         Scanner in = new Scanner(System.in);
+        char key;
         
-        while (!game.getState().isGameOver()) {
+        while (!controller.getGameState().isGameOver()) {
             
-            try {
-                handleInput(game, in.nextLine());
-            } catch (IllegalMoveException ex) {
-                System.out.print(game.getState().getFighter(ex.getPlayer()).getName() + " (" + ex.getPlayer() + "): ");
-                System.out.println(ex.getMessage());
+            key = in.nextLine().charAt(0);
+
+            MoveAnalysis analysis = controller.handleInput(key);
+
+            if (analysis != null && !analysis.isLegal()) {
+                System.out.println(analysis.getMessage());
             }
         }
         
-        Player winner = game.getState().getWinner();
+        Player winner = controller.getGameState().getWinner();
         
         if (winner == null) {
             System.out.println("Tie game!");
@@ -49,24 +51,24 @@ public class ConsoleUI implements Observer {
         
         for (Player player : Player.values()) {
             
-            Stack<Card> discard = game.getState().getDiscard(player);
+            List<Card> discard = controller.getGameState().getDiscard(player);
             
-            String active = discard.isEmpty() ? "<empty>" : discard.peek().getShorthand();
+            String active = discard.isEmpty() ? "<empty>" : discard.get(discard.size() - 1).getShorthand();
             
-            System.out.println(game.getState().getFighter(player).getName() + ": " + active);
+            System.out.println(controller.getGameState().getFighter(player).getName() + ": " + active);
         }
         
         System.out.println();
         
-        for (Base base : game.getState().getBases()) {
+        for (Base base : controller.getGameState().getBases()) {
 
-            Stack<Card> leftStack = base.getBaseStack(Player.LEFT).getStack();
+            List<Card> leftStack = base.getBaseStack(Player.LEFT).getStack();
 
             for (int i = leftStack.size() - 1; i >= 0; i--) {
                 System.out.print(" " + leftStack.get(i).getShorthand());
             }
             
-            System.out.print(" |" + base.getBaseCards().peek().getShorthand() + "|");
+            System.out.print(" |" + base.getBaseCards().get(base.getBaseCards().size() - 1).getShorthand() + "|");
             
             for (Card card : base.getBaseStack(Player.RIGHT).getStack()) {
                 System.out.print(" " + card.getShorthand());
@@ -74,97 +76,9 @@ public class ConsoleUI implements Observer {
             System.out.println();
         }
         System.out.println();
-        
-        Player current = game.getCurrentPlayer();
-        
-        if (current != null) {
-            System.out.println(game.getState().getFighter(current).getName() + " to play:");
-            System.out.println();
-        }
     }
     
-    private static void handleInput(BrawlGame game, String input) throws IllegalMoveException {
-        
-        BasePosition bp;
-        Player s;
-        Player p;
-        
-        switch (input.charAt(0)) {
-            // LEFT PLAYER CONTROLS
-            case 'w':
-                bp = BasePosition.HIGH;
-                s = Player.LEFT;
-                p = Player.LEFT;
-                break;
-            case 'e':
-                bp = BasePosition.HIGH;
-                s = Player.RIGHT;
-                p = Player.LEFT;
-                break;
-            case 's':
-                bp = BasePosition.MID;
-                s = Player.LEFT;
-                p = Player.LEFT;
-                break;
-            case 'd':
-                bp = BasePosition.MID;
-                s = Player.RIGHT;
-                p = Player.LEFT;
-                break;
-            case 'x':
-                bp = BasePosition.LOW;
-                s = Player.LEFT;
-                p = Player.LEFT;
-                break;
-            case 'c':
-                bp = BasePosition.LOW;
-                s = Player.RIGHT;
-                p = Player.LEFT;
-                break;
-            case 'z':
-                game.draw(Player.LEFT);
-                return;
-            // RIGHT PLAYER CONTROLS
-            case 'o':
-                bp = BasePosition.HIGH;
-                s = Player.LEFT;
-                p = Player.RIGHT;
-                break;
-            case 'p':
-                bp = BasePosition.HIGH;
-                s = Player.RIGHT;
-                p = Player.RIGHT;
-                break;
-            case 'l':
-                bp = BasePosition.MID;
-                s = Player.LEFT;
-                p = Player.RIGHT;
-                break;
-            case ';':
-                bp = BasePosition.MID;
-                s = Player.RIGHT;
-                p = Player.RIGHT;
-                break;
-            case '.':
-                bp = BasePosition.LOW;
-                s = Player.LEFT;
-                p = Player.RIGHT;
-                break;
-            case '/':
-                bp = BasePosition.LOW;
-                s = Player.RIGHT;
-                p = Player.RIGHT;
-                break;
-            case ',':
-                game.draw(Player.RIGHT);
-                return;
-            default:
-                System.out.println("Unrecognized command.");
-                return;
-        }
-        
-        game.tryMove(p, bp, s);
-    }
+    
 
     @Override
     public void update(Observable o, Object o1) {

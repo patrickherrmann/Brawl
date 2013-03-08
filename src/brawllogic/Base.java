@@ -1,6 +1,8 @@
 package brawllogic;
 
+import java.util.Collections;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -23,18 +25,25 @@ public final class Base {
         baseCards.push(baseCard);
     }
     
-    void tryMove(Player side, Card card) throws GameplayException {
+    public GameplayAnalysis canPlay(Player side, Card card) {
         
         if (side == null)
             throw new IllegalArgumentException("side cannot be null.");
         
         if (isFrozen())
-            throw new GameplayException("Cannot play on a frozen base.");
+            return new GameplayAnalysis(false, "Cannot play on a frozen base.");
         
+        if (card.getType() == CardType.FREEZE)
+            return new GameplayAnalysis(true, "A freeze can be played on this base.");
+        else
+            return baseStacks.get(side).canPlay(card);
+    }
+
+    public void play(Player side, Card card) {
         if (card.getType() == CardType.FREEZE)
             baseCards.push(card);
         else
-            baseStacks.get(side).tryMove(card);
+            baseStacks.get(side).play(card);
     }
     
     public Player getWinner() {
@@ -52,8 +61,8 @@ public final class Base {
         return baseCards.peek().getType() == CardType.FREEZE;
     }
     
-    public Stack<Card> getBaseCards() {
-        return baseCards;
+    public List<Card> getBaseCards() {
+        return Collections.unmodifiableList(baseCards);
     }
     
     public BaseStack getBaseStack(Player side) {

@@ -1,8 +1,10 @@
 package driver;
 
-import brawllogic.BrawlGame;
+import brawllogic.Controller;
 import brawllogic.Fighter;
-import brawllogic.TournamentModeGame;
+import brawllogic.GameState;
+import brawllogic.KeyMap;
+import brawllogic.TournamentModeGameState;
 import consoleui.ConsoleUI;
 import gui.GameFrame;
 
@@ -15,11 +17,13 @@ public class Driver {
         Fighter bennett = new Fighter("Original", "Bennett");
         Fighter darwin = new Fighter("Original", "Darwin");
         
-        BrawlGame game = new TournamentModeGame(bennett, darwin);
+        GameState gameState = new TournamentModeGameState(bennett, darwin);
+
+        Controller controller = new Controller(gameState, KeyMap.getDefaultKeyMap());
         
-        GameFrame gui = new GameFrame(game, 1280, 854);
-        gui.setVisible(true);
-        ConsoleUI cui = new ConsoleUI(game);
+        GameFrame gui = new GameFrame(controller, 1280, 854);
+        ConsoleUI cui = new ConsoleUI(controller);
+        gui.start();
         cui.start();
     }
     

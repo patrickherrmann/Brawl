@@ -1,5 +1,7 @@
 package brawllogic;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -10,44 +12,52 @@ public final class BaseStack {
     private CardColor color = CardColor.NONE;
     private Stack<Card> stack = new Stack<Card>();
     
-    void tryMove(Card card) throws GameplayException {
+    public GameplayAnalysis canPlay(Card card)  {
         
         if (card.getType().getCategory() != CardCategory.STACKER)
-            throw new GameplayException("This type of card cannot be stacked on either side of a base.");
+            return new GameplayAnalysis(false, "This type of card cannot be stacked on either side of a base.");
         
         if (color == CardColor.NONE) {
             
             if (card.getType() != CardType.HIT)
-                throw new GameplayException("The first card played on an empty base must be a hit card.");
+                return new GameplayAnalysis(false, "The first card played on an empty base must be a hit card.");
             
-            stack.push(card);
-            color = card.getColor();
+            return new GameplayAnalysis(true, "This is a legal first move on the side of a base.");
         } else {
             
             if (card.getType() == CardType.PRESS) {
                 
                 if (stack.peek().getType() != CardType.BLOCK)
-                    throw new GameplayException("A press must be played on a block.");
+                    return new GameplayAnalysis(false, "A press must be played on a block.");
                 
-                stack.push(card);
+                return new GameplayAnalysis(true, "You may play a press on this block.");
             } else {
                 
                 if (card.getColor() != color)
-                    throw new GameplayException("This color card cannot be stacked in this pile.");
+                    return new GameplayAnalysis(false, "This color card cannot be stacked in this pile.");
                 
                 if (stack.peek().getType() == CardType.BLOCK)
-                    throw new GameplayException("This card cannot be played on a blocked pile.");
+                    return new GameplayAnalysis(false, "This card cannot be played on a blocked pile.");
                 
                 if (stack.peek().getType() == CardType.PRESS) {
                     
                     if (card.getType() != CardType.HIT)
-                        throw new GameplayException("Only hits can be played on presses.");
+                        return new GameplayAnalysis(false, "Only hits can be played on presses.");
                     
                 }
                 
-                stack.push(card);
+                return new GameplayAnalysis(true, "You may stack this card here.");
             }
         }
+    }
+
+    public void play(Card card) {
+
+        if (color == CardColor.NONE) {
+            color = card.getColor();
+        }
+
+        stack.push(card);
     }
     
     public int getScore() {
@@ -64,7 +74,7 @@ public final class BaseStack {
         return score;
     }
     
-    public Stack<Card> getStack() {
-        return stack;
+    public List<Card> getStack() {
+        return Collections.unmodifiableList(stack);
     }
 }

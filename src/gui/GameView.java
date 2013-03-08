@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Stack;
 
 /**
  * @author Patrick Herrmann
@@ -40,9 +39,9 @@ public class GameView implements Observer {
         updateView();
     }
     
-    private void updateView() { // Use mathematical coordinates, with origin at CENTER of the screen
+    private void updateView() {
         
-        Stack<Card> pile;
+        List<Card> pile;
         CardView cv;
         
         // Position decks
@@ -50,7 +49,7 @@ public class GameView implements Observer {
         pile = gameState.getDeck(Player.LEFT);
         
         if (!pile.isEmpty()) {
-            cv = cardViews.get(pile.peek());
+            cv = cardViews.get(pile.get(pile.size() - 1));
             cv.setPosition(-DECK_OFFSET, -(CARD_HEIGHT - PADDING));
             cv.setZIndex(zindex++);
             cv.setVisibility(true);
@@ -59,7 +58,7 @@ public class GameView implements Observer {
         pile = gameState.getDeck(Player.RIGHT);
         
         if (!pile.isEmpty()) {
-            cv = cardViews.get(pile.peek());
+            cv = cardViews.get(pile.get(pile.size() - 1));
             cv.setPosition(DECK_OFFSET, -(CARD_HEIGHT - PADDING));
             cv.setZIndex(zindex++);
             cv.setVisibility(true);
@@ -77,7 +76,7 @@ public class GameView implements Observer {
                 cv.setZIndex(zindex++);
             }
             
-            cv = cardViews.get(pile.peek());
+            cv = cardViews.get(pile.get(pile.size() - 1));
             cv.setPosition(-(DECK_OFFSET - PADDING), 0);
             cv.setZIndex(zindex++);
         }
@@ -92,7 +91,7 @@ public class GameView implements Observer {
                 cv.setZIndex(zindex++);
             }
             
-            cv = cardViews.get(pile.peek());
+            cv = cardViews.get(pile.get(pile.size() - 1));
             cv.setPosition(DECK_OFFSET - PADDING, 0);
             cv.setZIndex(zindex++);
         }
@@ -109,7 +108,7 @@ public class GameView implements Observer {
             baseY = baseStart - i * BASE_PADDING;
             
             for (Player side : Player.values()) {
-                Stack<Card> baseStack = base.getBaseStack(side).getStack();
+                List<Card> baseStack = base.getBaseStack(side).getStack();
                 double offset = side == Player.LEFT ? -50 : 50;
                 
                 int j = baseStack.size() - 3;
@@ -124,9 +123,9 @@ public class GameView implements Observer {
             
             pile = base.getBaseCards();
             
-            cv = cardViews.get(pile.firstElement());
+            cv = cardViews.get(pile.get(0));
             cv.setPosition(0, baseY);
-            cv.setRotation(Math.PI / 2 * (pile.firstElement().getOwner() == Player.LEFT ? -1 : 1));
+            cv.setRotation(Math.PI / 2 * (pile.get(0).getOwner() == Player.LEFT ? -1 : 1));
             cv.setZIndex(zindex++);
             cv.setVisibility(true);
             
