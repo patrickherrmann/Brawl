@@ -8,6 +8,7 @@ import deepdish.Painter;
 import deepdish.Scene;
 import deepdish.Viewport;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.ImageIcon;
@@ -44,9 +45,11 @@ public class GameFrame extends JFrame {
             scene.add(obj);
         
         Viewport viewport = new Viewport(width, height);
+        viewport.getGraphics().setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+
         animator = new Animator(scene, 80);
         
-        painter = new Painter(scene, viewport, 30) {
+        painter = new Painter(scene, viewport, 25) {
 
             @Override
             public void sendToScreen(Image image) {

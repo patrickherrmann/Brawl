@@ -16,16 +16,16 @@ import java.util.Observer;
  */
 public class GameView implements Observer {
     
-    public static final int DECK_OFFSET = 500;
-    public static final int CARD_WIDTH = 100;
-    public static final int CARD_HEIGHT = 200;
-    public static final int PADDING = 30;
+    private static final int DECK_OFFSET = 500;
+    private static final int CARD_WIDTH = 100;
+    private static final int CARD_HEIGHT = 200;
+    private static final int PADDING = 30;
     
-    public static final int BASE_PADDING = 300;
+    private static final int BASE_PADDING = 300;
     
     private GameState gameState;
     private Map<Card, CardView> cardViews;
-    private static int zindex = Integer.MIN_VALUE;
+    private int z;
     
     public GameView(GameState gameState) {
         this.gameState = gameState;
@@ -40,108 +40,77 @@ public class GameView implements Observer {
     }
     
     private void updateView() {
-        
-        List<Card> pile;
+
+        z = 0;
+        int m;
         CardView cv;
-        
-        // Position decks
-        
-        pile = gameState.getDeck(Player.LEFT);
-        
-        if (!pile.isEmpty()) {
-            cv = cardViews.get(pile.get(pile.size() - 1));
-            cv.setPosition(-DECK_OFFSET, -(CARD_HEIGHT - PADDING));
-            cv.setZIndex(zindex++);
-            cv.setVisibility(true);
-        }
-        
-        pile = gameState.getDeck(Player.RIGHT);
-        
-        if (!pile.isEmpty()) {
-            cv = cardViews.get(pile.get(pile.size() - 1));
-            cv.setPosition(DECK_OFFSET, -(CARD_HEIGHT - PADDING));
-            cv.setZIndex(zindex++);
-            cv.setVisibility(true);
-        }
-        
-        // Position active card and discard piles
-        
-        pile = gameState.getDiscard(Player.LEFT);
-        
-        if (!pile.isEmpty()) {
-            
-            for (int i = 0; i < pile.size() - 1; i++) {
-                cv = cardViews.get(pile.get(i));
-                cv.setPosition(-DECK_OFFSET, CARD_HEIGHT - PADDING);
-                cv.setZIndex(zindex++);
+
+        // Draw each player's decks
+        for (Player player : Player.values()) {
+            m = player == Player.LEFT ? -1 : 1;
+
+            List<Card> deck = gameState.getDeck(player);
+
+            for (Card card : deck) {
+                cv = cardViews.get(card);
+                cv.animateLocation(m * DECK_OFFSET, -BASE_PADDING);
+                cv.setZIndex(z++);
             }
-            
-            cv = cardViews.get(pile.get(pile.size() - 1));
-            cv.setPosition(-(DECK_OFFSET - PADDING), 0);
-            cv.setZIndex(zindex++);
-        }
-        
-        pile = gameState.getDiscard(Player.RIGHT);
-        
-        if (!pile.isEmpty()) {
-            
-            for (int i = 0; i < pile.size() - 1; i++) {
-                cv = cardViews.get(pile.get(i));
-                cv.setPosition(DECK_OFFSET, CARD_HEIGHT - PADDING);
-                cv.setZIndex(zindex++);
+
+            List<Card> discard = gameState.getDiscard(player);
+
+            double x = m * DECK_OFFSET;
+            double y = BASE_PADDING;
+
+            for (int i = 0; i < discard.size() - 1; i++) {
+                cv = cardViews.get(discard.get(i));
+                cv.animateLocation(x, y);
+                cv.setZIndex(z++);
             }
-            
-            cv = cardViews.get(pile.get(pile.size() - 1));
-            cv.setPosition(DECK_OFFSET - PADDING, 0);
-            cv.setZIndex(zindex++);
+
+            if (gameState.canPlay(player)) {
+                x = m * (DECK_OFFSET - (CARD_WIDTH - PADDING));
+                y = 0;
+            }
+
+            if (!discard.isEmpty()) {
+                cv = cardViews.get(discard.get(discard.size() - 1));
+                cv.animateLocation(x, y);
+            }
         }
-        
-        // BASES
-        
-        List<Base> bases = gameState.getBases();
-        
-        double baseStart = (bases.size() - 1) * BASE_PADDING / 2;
-        double baseY;
-        
-        for (int i = 0; i < bases.size(); i++) {
-            Base base = bases.get(i);
-            baseY = baseStart - i * BASE_PADDING;
-            
+
+        double baseY = (gameState.getBases().size() - 1) * BASE_PADDING / 2;
+
+        // Draw each base
+        for (Base base : gameState.getBases()) {
+
+            for (Card card : base.getBaseCards()) {
+                m = card.getOwner() == Player.LEFT ? -1 : 1;
+                cv = cardViews.get(card);
+                cv.animateLocation(0, baseY);
+                cv.setZIndex(z++);
+                cv.animateRotation(m * Math.PI / 2);
+            }
+
+            int i = 0;
             for (Player side : Player.values()) {
-                List<Card> baseStack = base.getBaseStack(side).getStack();
-                double offset = side == Player.LEFT ? -50 : 50;
-                
-                int j = baseStack.size() - 3;
-                if (j < 0) j = 0;
-                
-                while (j < baseStack.size()) {
-                    cv = cardViews.get(baseStack.get(j));
-                    cv.setPosition(offset * (1.5 + j++), baseY);
-                    cv.setZIndex(zindex++);
+                m = side == Player.LEFT ? -1 : 1;
+
+                for (Card card : base.getBaseStack(side).getStack()) {
+                    cv = cardViews.get(card);
+                    cv.animateLocation(m * (4 + i++) * PADDING, baseY);
+                    cv.setZIndex(z++);
                 }
             }
-            
-            pile = base.getBaseCards();
-            
-            cv = cardViews.get(pile.get(0));
-            cv.setPosition(0, baseY);
-            cv.setRotation(Math.PI / 2 * (pile.get(0).getOwner() == Player.LEFT ? -1 : 1));
-            cv.setZIndex(zindex++);
-            cv.setVisibility(true);
-            
-            for (int j = 1; j < pile.size(); j++) {
-                cv = cardViews.get(pile.get(j));
-                cv.setPosition(0, baseY);
-                cv.setRotation(Math.PI * -0.25);
-                cv.setZIndex(zindex++);
-            }
+
+            baseY -= BASE_PADDING;
         }
-        
-        // Out of play
-        
+
         for (Card card : gameState.getCardsOutOfPlay()) {
             cv = cardViews.get(card);
-            cv.setVisibility(false);
+            cv.animateLocation(0, 1000);
+            cv.animateDimensions(1, 2);
+            cv.setZIndex(z++);
         }
     }
     

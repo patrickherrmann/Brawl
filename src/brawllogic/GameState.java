@@ -144,7 +144,12 @@ public abstract class GameState extends Observable {
         } else if (card.getType() == CardType.CLEAR) {
             return canClear(basePosition);
         } else {
-            Base base = bases.get(getBaseIndex(basePosition));
+            int baseIndex = getBaseIndex(basePosition);
+
+            if (baseIndex == -1)
+                return new GameplayAnalysis(false, "There is no base at the specified position");
+
+            Base base = bases.get(baseIndex);
             return base.canPlay(side, card);
         }
     }

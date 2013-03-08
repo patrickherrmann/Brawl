@@ -21,6 +21,7 @@ public class TrainingModeGameState extends GameState {
 
         current = new Random().nextBoolean() ? Player.LEFT : Player.RIGHT;
         hasDrawn = false;
+        draw(current);
     }
 
     @Override
@@ -32,15 +33,21 @@ public class TrainingModeGameState extends GameState {
     public void move(Move move) {
         super.move(move);
         current = current.getOpponent();
+        setChanged();
+        notifyObservers();
     }
 
     @Override
-    public void draw(Player player) {
-        super.draw(player);
+    public final void draw(Player player) {
 
         if (hasDrawn) {
             current = current.getOpponent();
+        } else {
+            super.draw(player);
         }
         hasDrawn = ! hasDrawn;
+
+        setChanged();
+        notifyObservers();
     }
 }
