@@ -1,14 +1,14 @@
 package gui;
 
-import animation.Animator;
-import animation.GameObject;
-import animation.Painter;
-import animation.Scene;
-import animation.Viewport;
 import brawllogic.BasePosition;
 import brawllogic.BrawlGame;
 import brawllogic.IllegalMoveException;
 import brawllogic.Player;
+import deepdish.Animator;
+import deepdish.GameObject;
+import deepdish.Painter;
+import deepdish.Scene;
+import deepdish.Viewport;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

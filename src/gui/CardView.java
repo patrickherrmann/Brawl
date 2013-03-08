@@ -1,9 +1,9 @@
 package gui;
 
-import animation.GameObject;
-import animation.Viewport;
 import brawllogic.Card;
 import brawllogic.Fighter;
+import deepdish.GameObject;
+import deepdish.Viewport;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
