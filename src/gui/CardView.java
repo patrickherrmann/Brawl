@@ -1,6 +1,7 @@
 package gui;
 
 import brawllogic.Card;
+import brawllogic.CardType;
 import brawllogic.Fighter;
 import deepdish.MovableObject;
 import java.awt.Color;
@@ -51,6 +52,11 @@ public class CardView extends MovableObject {
         }
         g.setColor(Color.BLACK);
         g.drawRect(0, 0, dim.x, dim.y);
+
+        if (card.getType() == CardType.BLOCK) {
+            g.drawRect(3, 3, dim.x - 6, dim.y - 6);
+            g.drawRect(6, 6, dim.x - 12, dim.y - 12);
+        }
     }
 
     @Override

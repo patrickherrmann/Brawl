@@ -24,11 +24,11 @@ public class Driver {
         GameState gameState = new TournamentModeGameState(bennett, darwin);
 
         // Set up the players
-        HumanPlayer leftPlayer = new HumanPlayer(Player.LEFT, KeyMap.getDefaultKeyMap(Player.LEFT));
+        ComputerPlayer leftPlayer = new ComputerPlayer(Player.LEFT, gameState, 1.0);
         ComputerPlayer rightPlayer = new ComputerPlayer(Player.RIGHT, gameState, 1.0);
 
         // Create a controller that receives input for the left player
-        Controller controller = new Controller(gameState, leftPlayer);
+        Controller controller = new Controller(gameState);
 
         // Create a game panel and a console UI as two views
         GamePanel panel = new GamePanel(controller, 1280, 854);
@@ -43,6 +43,7 @@ public class Driver {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Kick everything off
+        leftPlayer.start();
         rightPlayer.start();
         panel.start();
         cui.start();

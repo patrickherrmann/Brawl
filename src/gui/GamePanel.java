@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 /**
  * @author Patrick Herrmann
  */
-public class GamePanel extends JPanel {
+public final class GamePanel extends JPanel {
     
     private Animator animator;
     private Painter painter;

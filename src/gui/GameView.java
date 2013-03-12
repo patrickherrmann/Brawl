@@ -14,7 +14,7 @@ import java.util.Observer;
 /**
  * @author Patrick Herrmann
  */
-public class GameView implements Observer {
+public final class GameView implements Observer {
     
     private static final int DECK_OFFSET = 500;
     private static final int CARD_WIDTH = 100;
@@ -23,7 +23,7 @@ public class GameView implements Observer {
     
     private static final int BASE_PADDING = 300;
     
-    private GameState gameState;
+    private  GameState gameState;
     private Map<Card, CardView> cardViews;
     private int z;
     
@@ -114,7 +114,7 @@ public class GameView implements Observer {
         for (Card card : gameState.getCardsOutOfPlay()) {
             cv = cardViews.get(card);
             cv.animateLocation(0, 1000);
-            cv.animateDimensions(1, 2);
+            cv.animateRotation(50);
             cv.setZIndex(z++);
         }
     }
