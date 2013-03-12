@@ -13,14 +13,12 @@ import java.util.List;
  */
 public class Move {
 
-    public static List<Move> getAllMoves() {
+    public static List<Move> getAllMoves(Player player) {
         List<Move> moves = new ArrayList<Move>();
 
-        for (Player player : Player.values()) {
-            for (Player side : Player.values()) {
-                for (BasePosition basePosition : BasePosition.values()) {
-                    moves.add(new Move(player, side, basePosition));
-                }
+        for (Player side : Player.values()) {
+            for (BasePosition basePosition : BasePosition.values()) {
+                moves.add(new Move(player, side, basePosition));
             }
         }
 
@@ -49,6 +47,26 @@ public class Move {
     }
 
     public int getHeuristic(GameState gameState) {
-        return 1;
+
+        List<Card> discard = gameState.getDiscard(player);
+        
+        if (discard.isEmpty())
+            return -1;
+
+        Card activeCard = discard.get(discard.size() - 1);
+
+        switch (activeCard.getType()) {
+            case HIT:
+            case SMASH:
+            case PRESS:
+                return player == side ? 1 : -1;
+            case BLOCK:
+                return player == side ? -1 : 1;
+            case CLEAR:
+            case FREEZE:
+            case BASE:
+            default:
+                return 1;
+        }
     }
 }

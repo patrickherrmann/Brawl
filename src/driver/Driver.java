@@ -1,9 +1,10 @@
 package driver;
 
-import brawllogic.AI;
+import brawllogic.ComputerPlayer;
 import brawllogic.Controller;
 import brawllogic.Fighter;
 import brawllogic.GameState;
+import brawllogic.HumanPlayer;
 import brawllogic.KeyMap;
 import brawllogic.Player;
 import brawllogic.TournamentModeGameState;
@@ -22,11 +23,18 @@ public class Driver {
         
         GameState gameState = new TournamentModeGameState(bennett, darwin);
 
-        Controller controller = new Controller(gameState, KeyMap.getDefaultKeyMap());
-        
+        // Set up the players
+        HumanPlayer leftPlayer = new HumanPlayer(Player.LEFT, KeyMap.getDefaultKeyMap(Player.LEFT));
+        ComputerPlayer rightPlayer = new ComputerPlayer(Player.RIGHT, gameState, 0.3);
+
+        // Create a controller that receives input for the left player
+        Controller controller = new Controller(gameState, leftPlayer);
+
+        // Create a game panel and a console UI as two views
         GamePanel panel = new GamePanel(controller, 1280, 854);
         ConsoleUI cui = new ConsoleUI(controller);
-        
+
+        // Add the game panel to a JFrame
         JFrame frame = new JFrame("Brawl");
         frame.add(panel);
         frame.addKeyListener(panel.getKeyListener());
@@ -34,11 +42,8 @@ public class Driver {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        AI aiLeft = new AI(Player.LEFT, gameState, 0.75);
-        AI aiRight = new AI(Player.RIGHT, gameState, 0.5);
-        aiLeft.start();
-        aiRight.start();
-
+        // Kick everything off
+        rightPlayer.start();
         panel.start();
         cui.start();
     }

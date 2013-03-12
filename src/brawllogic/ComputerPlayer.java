@@ -6,18 +6,18 @@ import java.util.List;
  *
  * @author patrick
  */
-public class AI extends Thread {
+public class ComputerPlayer extends Thread {
 
     private Player player;
     private final GameState gameState;
     private int sleepTime;
+    private List<Move> moves;
 
-    private List<Move> moves = Move.getAllMoves();
-
-    public AI(Player player, GameState gameState, double difficulty) {
+    public ComputerPlayer(Player player, GameState gameState, double difficulty) {
         this.player = player;
         this.gameState = gameState;
         this.sleepTime = (int)((1.0 - difficulty) * 2800 + 200);
+        this.moves = Move.getAllMoves(player);
     }
 
     @Override

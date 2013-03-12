@@ -1,63 +1,34 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package brawllogic;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author patrick
  */
-public class Controller {
+public final class Controller {
 
     private GameState gameState;
-    private KeyMap keyMap;
+    private HumanPlayer[] humanPlayers;
 
-    public Controller(GameState gameState, KeyMap keyMap) {
+    public Controller(GameState gameState, HumanPlayer... humanPlayers) {
         this.gameState = gameState;
-        this.keyMap = keyMap;
+        this.humanPlayers = humanPlayers;
     }
 
-    public MoveAnalysis handleInput(char key) {
+    public List<MoveAnalysis> handleInput(char key) {
 
-        synchronized (gameState) {
+        List<MoveAnalysis> analyses = new ArrayList<MoveAnalysis>();
 
-            MoveAnalysis analysis;
-
-            // Check if they tried to draw
-            for (Player player : Player.values()) {
-                if (key == keyMap.getDrawKey(player)) {
-                    if (gameState.canPlay(player)) {
-                        analysis = gameState.canDraw(player);
-                        if (analysis.isLegal()) {
-                            gameState.draw(player);
-                        }
-                        return analysis;
-                    }
-                }
-            }
-
-            // Handle every other kind of move
-            Move move = keyMap.getMoves().get(key);
-
-            if (move == null) {
-                return null; // The key is meaningless
-            }
-
-            analysis = gameState.analyzeMove(move);
-
-            if (analysis.isLegal()) {
-                gameState.move(move);
-            }
-            return analysis;
+        for (HumanPlayer humanPlayer : humanPlayers) {
+            analyses.add(humanPlayer.handleInput(key, gameState));
         }
+
+        return analyses;
     }
 
     public GameState getGameState() {
         return gameState;
-    }
-
-    public KeyMap getKeyMap() {
-        return keyMap;
     }
 }

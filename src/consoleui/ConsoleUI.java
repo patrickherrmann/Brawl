@@ -29,10 +29,12 @@ public class ConsoleUI implements Observer {
             
             key = in.nextLine().charAt(0);
 
-            MoveAnalysis analysis = controller.handleInput(key);
+            List<MoveAnalysis> analyses = controller.handleInput(key);
 
-            if (analysis != null && !analysis.isLegal()) {
-                System.out.println(analysis.getMessage());
+            for (MoveAnalysis analysis : analyses) {
+                if (analysis != null && !analysis.isLegal()) {
+                    System.out.println(analysis.getMessage());
+                }
             }
         }
         

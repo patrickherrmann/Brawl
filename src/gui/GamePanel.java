@@ -11,6 +11,7 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -48,7 +49,7 @@ public class GamePanel extends JPanel {
 
         animator = new Animator(scene, 80);
         
-        painter = new Painter(scene, viewport, 25) {
+        painter = new Painter(scene, viewport, 24) {
 
             @Override
             public void sendToScreen(Image image) {
@@ -81,10 +82,12 @@ public class GamePanel extends JPanel {
 
         @Override
         public void keyPressed(KeyEvent ke) {
-            MoveAnalysis analysis = controller.handleInput(ke.getKeyChar());
+            List<MoveAnalysis> analyses = controller.handleInput(ke.getKeyChar());
 
-            if (analysis != null && !analysis.isLegal()) {
-                System.out.println(analysis.getMessage());
+            for (MoveAnalysis analysis : analyses) {
+                if (analysis != null && !analysis.isLegal()) {
+                    System.out.println(analysis.getMessage());
+                }
             }
         }
 
