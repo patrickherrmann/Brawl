@@ -166,7 +166,7 @@ public abstract class GameState extends Observable {
         }
     }
     
-    public MoveAnalysis isLegal(Move move)  {
+    public MoveAnalysis analyzeMove(Move move)  {
 
         Player player = move.getPlayer();
         Stack<Card> discard = discards.get(player);

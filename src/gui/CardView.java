@@ -2,7 +2,7 @@ package gui;
 
 import brawllogic.Card;
 import brawllogic.Fighter;
-import deepdish.MoveableObject;
+import deepdish.MovableObject;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -11,7 +11,7 @@ import java.util.Random;
 /**
  * @author Patrick Herrmann
  */
-public class CardView extends MoveableObject {
+public class CardView extends MovableObject {
 
     private Card card;
     private Fighter fighter;
