@@ -40,6 +40,8 @@ public class GamePanel extends JPanel {
         
         gameView = new GameView(controller.getGameState());
         scene = new Scene();
+
+        scene.add(new Tabletop());
         
         for (GameObject obj : gameView.getCardViews())
             scene.add(obj);

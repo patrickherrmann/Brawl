@@ -25,7 +25,7 @@ public class Driver {
 
         // Set up the players
         HumanPlayer leftPlayer = new HumanPlayer(Player.LEFT, KeyMap.getDefaultKeyMap(Player.LEFT));
-        ComputerPlayer rightPlayer = new ComputerPlayer(Player.RIGHT, gameState, 0.3);
+        ComputerPlayer rightPlayer = new ComputerPlayer(Player.RIGHT, gameState, 1.0);
 
         // Create a controller that receives input for the left player
         Controller controller = new Controller(gameState, leftPlayer);
