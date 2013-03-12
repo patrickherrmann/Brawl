@@ -42,7 +42,7 @@ public class GameView implements Observer {
     private void updateView() {
 
         z = 0;
-        int m;
+        int m, i;
         CardView cv;
 
         // Draw each player's decks
@@ -62,7 +62,7 @@ public class GameView implements Observer {
             double x = m * DECK_OFFSET;
             double y = BASE_PADDING;
 
-            for (int i = 0; i < discard.size() - 1; i++) {
+            for (i = 0; i < discard.size() - 1; i++) {
                 cv = cardViews.get(discard.get(i));
                 cv.animateLocation(x, y);
                 cv.setZIndex(z++);
@@ -92,13 +92,18 @@ public class GameView implements Observer {
                 cv.animateRotation(m * Math.PI / 2);
             }
 
-            int i = 0;
+            
             for (Player side : Player.values()) {
                 m = side == Player.LEFT ? -1 : 1;
 
-                for (Card card : base.getBaseStack(side).getStack()) {
-                    cv = cardViews.get(card);
-                    cv.animateLocation(m * (4 + i++) * PADDING, baseY);
+                List<Card> stack = base.getBaseStack(side).getStack();
+
+                for (i = 0; i < stack.size(); i++) {
+                    cv = cardViews.get(base.getBaseStack(side).getStack().get(i));
+                    int n = i;
+                    if (stack.size() > 4) n -= (stack.size() - 4);
+                    if (n < 0) n = 0;
+                    cv.animateLocation(m * (4 + n) * PADDING, baseY);
                     cv.setZIndex(z++);
                 }
             }

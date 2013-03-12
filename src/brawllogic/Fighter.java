@@ -1,11 +1,13 @@
 package brawllogic;
 
+import java.awt.Image;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Stack;
 import java.util.StringTokenizer;
@@ -40,6 +42,7 @@ public final class Fighter {
     
     private String theme;
     private String name;
+    private Map<String, Image> images;
     
     public Fighter(String theme, String name) {
         this.theme = theme;
@@ -152,5 +155,9 @@ public final class Fighter {
     
     public String getName() {
         return name;
+    }
+
+    public Image getImage(String shorthand) {
+        return images.get(shorthand);
     }
 }

@@ -12,13 +12,13 @@ import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  * @author Patrick Herrmann
  */
-public class GameFrame extends JFrame {
+public class GamePanel extends JPanel {
     
     private Animator animator;
     private Painter painter;
@@ -27,12 +27,11 @@ public class GameFrame extends JFrame {
     private GameView gameView;
     private JLabel canvas;
     
-    public GameFrame(Controller controller, int width, int height) {
-        super("Brawl");
+    public GamePanel(Controller controller, int width, int height) {
+        super();
         
         this.controller = controller;
         
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         initializeAnimation(width, height);
     }
     
@@ -60,14 +59,17 @@ public class GameFrame extends JFrame {
 
         canvas = new JLabel(new ImageIcon(viewport.getImage()));
         add(canvas);
-        addKeyListener(new KeyHandler());
-        pack();
+        
     }
 
     public void start() {
         setVisible(true);
         animator.start();
         painter.start();
+    }
+
+    public KeyListener getKeyListener() {
+        return new KeyHandler();
     }
     
     private class KeyHandler implements KeyListener {

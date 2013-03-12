@@ -6,7 +6,8 @@ import brawllogic.GameState;
 import brawllogic.KeyMap;
 import brawllogic.TournamentModeGameState;
 import consoleui.ConsoleUI;
-import gui.GameFrame;
+import gui.GamePanel;
+import javax.swing.JFrame;
 
 /**
  * @author Patrick Herrmann
@@ -21,9 +22,17 @@ public class Driver {
 
         Controller controller = new Controller(gameState, KeyMap.getDefaultKeyMap());
         
-        GameFrame gui = new GameFrame(controller, 1280, 854);
+        GamePanel panel = new GamePanel(controller, 1280, 854);
         ConsoleUI cui = new ConsoleUI(controller);
-        gui.start();
+        
+        JFrame frame = new JFrame("Brawl");
+        frame.add(panel);
+        frame.addKeyListener(panel.getKeyListener());
+        frame.pack();
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        panel.start();
         cui.start();
     }
     
