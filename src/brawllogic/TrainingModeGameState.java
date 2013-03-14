@@ -42,12 +42,11 @@ public class TrainingModeGameState extends GameState {
 
         if (hasDrawn) {
             current = current.getOpponent();
+            setChanged();
+            notifyObservers();
         } else {
             super.draw(player);
         }
         hasDrawn = ! hasDrawn;
-
-        setChanged();
-        notifyObservers();
     }
 }

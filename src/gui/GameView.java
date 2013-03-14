@@ -16,12 +16,12 @@ import java.util.Observer;
  */
 public final class GameView implements Observer {
     
-    private static final int DECK_OFFSET = 500;
+    private static final int DECK_OFFSET = 400;
     private static final int CARD_WIDTH = 100;
     private static final int CARD_HEIGHT = 200;
     private static final int PADDING = 30;
     
-    private static final int BASE_PADDING = 300;
+    private static final int BASE_PADDING = 250;
     
     private  GameState gameState;
     private Map<Card, CardView> cardViews;

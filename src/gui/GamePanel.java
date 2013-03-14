@@ -20,7 +20,8 @@ import javax.swing.JPanel;
  * @author Patrick Herrmann
  */
 public final class GamePanel extends JPanel {
-    
+
+    private WindowFrame frame;
     private Animator animator;
     private Painter painter;
     private Scene scene;
@@ -28,12 +29,14 @@ public final class GamePanel extends JPanel {
     private GameView gameView;
     private JLabel canvas;
     
-    public GamePanel(Controller controller, int width, int height) {
+    public GamePanel(WindowFrame frame, Controller controller) {
         super();
-        
+
+        this.frame = frame;
+        frame.setTitle("Brawl");
         this.controller = controller;
         
-        initializeAnimation(width, height);
+        initializeAnimation(frame.getWidth(), frame.getHeight());
     }
     
     private void initializeAnimation(int width, int height) {
@@ -62,17 +65,13 @@ public final class GamePanel extends JPanel {
 
         canvas = new JLabel(new ImageIcon(viewport.getImage()));
         add(canvas);
-        
+
+        frame.addKeyListener(new KeyHandler());
     }
 
     public void start() {
-        setVisible(true);
         animator.start();
         painter.start();
-    }
-
-    public KeyListener getKeyListener() {
-        return new KeyHandler();
     }
     
     private class KeyHandler implements KeyListener {

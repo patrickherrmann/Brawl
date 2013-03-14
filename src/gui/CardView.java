@@ -59,11 +59,15 @@ public class CardView extends MovableObject {
         }
     }
 
+    private void skew() {
+        animateRotation(targetRotation + rng.nextDouble() * 0.2 - 0.1);
+    }
+
     @Override
     public void setLocation(double x, double y) {
         
         if (location.x != x && location.y != y) {
-            animateRotation(targetRotation + rng.nextDouble() * 0.2 - 0.1);
+            skew();
         }
 
         super.setLocation(x, y);
@@ -73,9 +77,15 @@ public class CardView extends MovableObject {
     public void animateLocation(double x, double y) {
         
         if (location.x != x && location.y != y) {
-            animateRotation(targetRotation + rng.nextDouble() * 0.2 - 0.1);
+            skew();
         }
 
         super.animateLocation(x, y);
+    }
+    
+    @Override
+    public int getZIndex() {
+        
+        return zIndex + (moving ? 500 : 0);
     }
 }

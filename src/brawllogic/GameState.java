@@ -39,9 +39,6 @@ public abstract class GameState extends Observable {
     
     public MoveAnalysis canDraw(Player player) {
         
-        if (player == null)
-            throw new IllegalArgumentException("Player cannot be null");
-        
         Stack<Card> deck = decks.get(player);
         
         if (deck.isEmpty())
