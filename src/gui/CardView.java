@@ -60,7 +60,7 @@ public class CardView extends MovableObject {
     }
 
     private void skew() {
-        animateRotation(targetRotation + rng.nextDouble() * 0.2 - 0.1);
+        animateRotation(targetRotation + rng.nextDouble() * 0.03 - 0.015);
     }
 
     @Override
