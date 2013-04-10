@@ -1,58 +1,60 @@
 package brawllogic;
 
+import deepdish.LoopThread;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  *
  * @author patrick
  */
-public class ComputerPlayer extends Thread {
+public class ComputerPlayer extends LoopThread {
 
     private Player player;
     private final GameState gameState;
-    private int sleepTime;
     private List<Move> moves;
 
     public ComputerPlayer(Player player, GameState gameState, double difficulty) {
+        super("Computer Player", (int)(difficulty * 3 + 1));
+
         this.player = player;
         this.gameState = gameState;
-        this.sleepTime = (int)((1.0 - difficulty) * 2800 + 200);
-        this.moves = Move.getAllMoves(player);
+        this.moves = new ArrayList<Move>();
+
+        for (BasePosition basePosition : BasePosition.values()) {
+            for (Player side : Player.values()) {
+                moves.add(new PlayCardAction(player, side, basePosition));
+            }
+        }
+
+        moves.add(new DrawAction(player));
     }
 
     @Override
-    public void run() {
+    public void performTask() {
 
-        while (!gameState.isGameOver()) {
+        if (gameState.isGameOver()) {
+            this.terminate();
+        }
 
-            int bestHeuristic = 0;
-            Move bestMove = null;
+        int bestHeuristic = 0;
+        Move bestMove = null;
 
-            synchronized (gameState) {
+        synchronized (gameState) {
 
-                for (Move move : moves) {
-                    int heuristic = move.getHeuristic(gameState);
-                    if (heuristic > bestHeuristic) {
-                        MoveAnalysis analysis = gameState.analyzeMove(move);
-                        if (analysis.isLegal()) {
-                            bestHeuristic = heuristic;
-                            bestMove = move;
-                        }
+            for (Move move : moves) {
+                int heuristic = move.getHeuristic(gameState);
+                if (heuristic > bestHeuristic) {
+                    MoveAnalysis analysis = move.analyze(gameState);
+                    if (analysis.isLegal()) {
+                        bestHeuristic = heuristic;
+                        bestMove = move;
                     }
-                }
-
-                if (bestMove == null) {
-                    if (gameState.canDraw(player).isLegal()) {
-                        gameState.draw(player);
-                    }
-                } else {
-                    gameState.move(bestMove);
                 }
             }
 
-            try {
-                Thread.sleep(sleepTime);
-            } catch (InterruptedException ex) {
+            if (bestMove != null) {
+                bestMove.perform(gameState);
             }
         }
     }

@@ -17,42 +17,35 @@ public class KeyMap {
     public static KeyMap getDefaultKeyMap(Player player) {
 
         Map<Character, Move> moves = new HashMap<Character, Move>();
-        char drawKey;
 
         if (player == Player.LEFT) {
-            moves.put('w', new Move(Player.LEFT, Player.LEFT, BasePosition.HIGH));
-            moves.put('e', new Move(Player.LEFT, Player.RIGHT, BasePosition.HIGH));
-            moves.put('s', new Move(Player.LEFT, Player.LEFT, BasePosition.MID));
-            moves.put('d', new Move(Player.LEFT, Player.RIGHT, BasePosition.MID));
-            moves.put('x', new Move(Player.LEFT, Player.LEFT, BasePosition.LOW));
-            moves.put('c', new Move(Player.LEFT, Player.RIGHT, BasePosition.LOW));
-            drawKey = 'z';
+            moves.put('w', new PlayCardAction(Player.LEFT, Player.LEFT, BasePosition.HIGH));
+            moves.put('e', new PlayCardAction(Player.LEFT, Player.RIGHT, BasePosition.HIGH));
+            moves.put('s', new PlayCardAction(Player.LEFT, Player.LEFT, BasePosition.MID));
+            moves.put('d', new PlayCardAction(Player.LEFT, Player.RIGHT, BasePosition.MID));
+            moves.put('x', new PlayCardAction(Player.LEFT, Player.LEFT, BasePosition.LOW));
+            moves.put('c', new PlayCardAction(Player.LEFT, Player.RIGHT, BasePosition.LOW));
+            moves.put('z', new DrawAction(player));
         } else {
-            moves.put('o', new Move(Player.RIGHT, Player.LEFT, BasePosition.HIGH));
-            moves.put('p', new Move(Player.RIGHT, Player.RIGHT, BasePosition.HIGH));
-            moves.put('l', new Move(Player.RIGHT, Player.LEFT, BasePosition.MID));
-            moves.put(';', new Move(Player.RIGHT, Player.RIGHT, BasePosition.MID));
-            moves.put('.', new Move(Player.RIGHT, Player.LEFT, BasePosition.LOW));
-            moves.put('/', new Move(Player.RIGHT, Player.RIGHT, BasePosition.LOW));
-            drawKey = ',';
+            moves.put('o', new PlayCardAction(Player.RIGHT, Player.LEFT, BasePosition.HIGH));
+            moves.put('p', new PlayCardAction(Player.RIGHT, Player.RIGHT, BasePosition.HIGH));
+            moves.put('l', new PlayCardAction(Player.RIGHT, Player.LEFT, BasePosition.MID));
+            moves.put(';', new PlayCardAction(Player.RIGHT, Player.RIGHT, BasePosition.MID));
+            moves.put('.', new PlayCardAction(Player.RIGHT, Player.LEFT, BasePosition.LOW));
+            moves.put('/', new PlayCardAction(Player.RIGHT, Player.RIGHT, BasePosition.LOW));
+            moves.put(',', new DrawAction(player));
         }
-
-        return new KeyMap(moves, drawKey);
+        
+        return new KeyMap(moves);
     }
     
     private Map<Character, Move> moves;
-    private char drawKey;
 
-    public KeyMap(Map<Character, Move> moves, char drawKey) {
+    public KeyMap(Map<Character, Move> moves) {
         this.moves = moves;
-        this.drawKey = drawKey;
     }
 
     public Map<Character, Move> getMoves() {
         return moves;
-    }
-
-    public char getDrawKey() {
-        return drawKey;
     }
 }

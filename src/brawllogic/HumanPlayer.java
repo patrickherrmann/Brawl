@@ -6,11 +6,9 @@ package brawllogic;
  */
 public class HumanPlayer {
 
-    private Player player;
     private KeyMap keyMap;
 
-    public HumanPlayer(Player player, KeyMap keyMap) {
-        this.player = player;
+    public HumanPlayer(KeyMap keyMap) {
         this.keyMap = keyMap;
     }
 
@@ -18,30 +16,18 @@ public class HumanPlayer {
 
         synchronized (gameState) {
 
-            MoveAnalysis analysis;
-
-            if (key == keyMap.getDrawKey()) {
-                if (gameState.canPlay(player)) {
-                    analysis = gameState.canDraw(player);
-                    if (analysis.isLegal()) {
-                        gameState.draw(player);
-                    }
-                    return analysis;
-                }
-            }
-
-            // Handle every other kind of move
             Move move = keyMap.getMoves().get(key);
 
             if (move == null) {
-                return null; // The key is meaningless
+                return null; // The key is not mapped to any action
             }
 
-            analysis = gameState.analyzeMove(move);
+            MoveAnalysis analysis = move.analyze(gameState);
 
             if (analysis.isLegal()) {
-                gameState.move(move);
+                move.perform(gameState);
             }
+
             return analysis;
         }
     }

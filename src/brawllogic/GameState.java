@@ -144,7 +144,7 @@ public abstract class GameState extends Observable {
         }
     }
     
-    public MoveAnalysis analyzeMove(Move move)  {
+    public MoveAnalysis analyzeMove(PlayCardAction move)  {
 
         Player player = move.getPlayer();
         Stack<Card> discard = discards.get(player);
@@ -155,7 +155,7 @@ public abstract class GameState extends Observable {
         return new MoveAnalysis(player, canPlayCard(move.getBasePosition(), discard.peek(), move.getSide()));
     }
 
-    public void move(Move move) {
+    public void move(PlayCardAction move) {
         playCard(move.getBasePosition(), discards.get(move.getPlayer()).pop(), move.getSide());
         setChanged();
         notifyObservers();

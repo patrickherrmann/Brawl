@@ -30,7 +30,7 @@ public class TrainingModeGameState extends GameState {
     }
 
     @Override
-    public void move(Move move) {
+    public void move(PlayCardAction move) {
         super.move(move);
         current = current.getOpponent();
         setChanged();
