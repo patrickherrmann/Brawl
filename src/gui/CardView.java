@@ -13,6 +13,8 @@ import java.util.Random;
  * @author Patrick Herrmann
  */
 public class CardView extends MovableObject {
+    
+    private static final double SKEW = 0.02;
 
     private Card card;
     private Fighter fighter;
@@ -60,7 +62,7 @@ public class CardView extends MovableObject {
     }
 
     private void skew() {
-        animateRotation(targetRotation + rng.nextDouble() * 0.03 - 0.015);
+        animateRotation(targetRotation + rng.nextGaussian() * SKEW);
     }
 
     @Override
