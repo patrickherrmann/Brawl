@@ -58,31 +58,12 @@ public abstract class GameState extends Observable {
         notifyObservers();
     }
     
-    private int getBaseIndex(BasePosition basePosition) {
-        
-        if (bases.size() == 1) {
-            
-            if (basePosition != BasePosition.MID)
-                return -1;
-            
-            return 0;
-            
-        } else if (bases.size() == 2) {
-            
-            if (basePosition == BasePosition.LOW)
-                return -1;
-            
-        }
-        
-        return basePosition.getIndex();
-    }
-    
     private GameplayAnalysis canClear(BasePosition basePosition) {
         
         if (bases.size() == 1)
             return new GameplayAnalysis(false, "Cannot clear only base.");
         
-        int baseIndex = getBaseIndex(basePosition);
+        int baseIndex = basePosition.getIndex(bases.size());
 
         if (baseIndex == -1)
             return new GameplayAnalysis(false, "There is no base at the specified position");
@@ -100,7 +81,7 @@ public abstract class GameState extends Observable {
 
     private void clear(BasePosition basePosition, Card card) {
 
-        int baseIndex = getBaseIndex(basePosition);
+        int baseIndex = basePosition.getIndex(bases.size());
 
         Base base = bases.get(baseIndex);
 
@@ -141,7 +122,7 @@ public abstract class GameState extends Observable {
         } else if (card.getType() == CardType.CLEAR) {
             return canClear(basePosition);
         } else {
-            int baseIndex = getBaseIndex(basePosition);
+            int baseIndex = basePosition.getIndex(bases.size());
 
             if (baseIndex == -1)
                 return new GameplayAnalysis(false, "There is no base at the specified position");
@@ -158,7 +139,7 @@ public abstract class GameState extends Observable {
         } else if (card.getType() == CardType.CLEAR) {
             clear(basePosition, card);
         } else {
-            Base base = bases.get(getBaseIndex(basePosition));
+            Base base = bases.get(basePosition.getIndex(bases.size()));
             base.play(side, card);
         }
     }

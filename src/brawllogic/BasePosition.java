@@ -4,15 +4,18 @@ package brawllogic;
  * @author Patrick Herrmann
  */
 public enum BasePosition {
-    HIGH(0), MID(1), LOW(2);
+
+    HIGH(new int[] {-1, 0, 0}),
+    MID (new int[] {0, -1, 1}),
+    LOW (new int[] {-1, 1, 2});
     
-    private int index;
+    private int[] indices;
     
-    private BasePosition(int index) {
-        this.index = index;
+    private BasePosition(int[] indices) {
+        this.indices = indices;
     }
     
-    public int getIndex() {
-        return index;
+    public int getIndex(int baseCount) {
+        return indices[baseCount - 1];
     }
 }
