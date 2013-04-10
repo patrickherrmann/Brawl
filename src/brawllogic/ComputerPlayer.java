@@ -14,7 +14,7 @@ public class ComputerPlayer extends LoopThread {
     private final GameState gameState;
     private List<Move> moves;
 
-    public ComputerPlayer(Player player, GameState gameState, int mps) {
+    public ComputerPlayer(Player player, GameState gameState, double mps) {
         super("Computer Player", mps);
 
         this.player = player;
