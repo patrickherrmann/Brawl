@@ -10,32 +10,20 @@ import java.util.List;
  */
 public class ComputerPlayer extends LoopThread {
 
-    private Player player;
     private final GameState gameState;
     private List<Move> moves;
 
     public ComputerPlayer(Player player, GameState gameState, double mps) {
         super("Computer Player", mps);
-
-        this.player = player;
+        
         this.gameState = gameState;
         this.moves = new ArrayList<Move>();
 
-        for (BasePosition basePosition : BasePosition.values()) {
-            for (Player side : Player.values()) {
-                moves.add(new PlayCardAction(player, side, basePosition));
-            }
-        }
-
-        moves.add(new DrawAction(player));
+        moves = Move.getAllMoves(player);
     }
 
     @Override
     public void performTask() {
-
-        if (gameState.isGameOver()) {
-            this.terminate();
-        }
 
         int bestHeuristic = 0;
         Move bestMove = null;
@@ -55,6 +43,10 @@ public class ComputerPlayer extends LoopThread {
 
             if (bestMove != null) {
                 bestMove.perform(gameState);
+            }
+
+            if (gameState.isGameOver()) {
+                this.terminate();
             }
         }
     }
