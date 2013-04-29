@@ -1,11 +1,10 @@
 package gui;
 
 import brawllogic.Card;
-import brawllogic.CardType;
 import brawllogic.Fighter;
 import deepdish.MovableObject;
-import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Point;
 import java.util.Random;
 
@@ -21,7 +20,7 @@ public class CardView extends MovableObject {
     private Random rng;
 
     public CardView(Card card, Fighter fighter) {
-        super(0, 0, 100, 200);
+        super(0, 0, 100, 162);
 
         rng = new Random();
         setSpeed(20);
@@ -32,33 +31,13 @@ public class CardView extends MovableObject {
 
     @Override
     public void paintObject(Graphics g, Point dim) {
-        Color color;
+        Image image;
         if (card.isFaceUp()) {
-            switch (card.getColor()) {
-                case RED:
-                    color = Color.RED; break;
-                case GREEN:
-                    color = Color.GREEN; break;
-                case BLUE:
-                    color = Color.BLUE; break;
-                default:
-                    color = Color.LIGHT_GRAY;
-            }
-            g.setColor(color);
-            g.fillRect(0, 0, dim.x, dim.y);
-            g.setColor(Color.BLACK);
-            g.drawString(card.getShorthand(), dim.x / 2, dim.y / 2);
+            image = fighter.getImage(card.getShorthand());
         } else {
-            g.setColor(Color.DARK_GRAY);
-            g.fillRect(0, 0, dim.x, dim.y);
+            image = fighter.getImage("back");
         }
-        g.setColor(Color.BLACK);
-        g.drawRect(0, 0, dim.x, dim.y);
-
-        if (card.getType() == CardType.BLOCK) {
-            g.drawRect(3, 3, dim.x - 6, dim.y - 6);
-            g.drawRect(6, 6, dim.x - 12, dim.y - 12);
-        }
+        g.drawImage(image, 0, 0, null);
     }
 
     private void skew() {

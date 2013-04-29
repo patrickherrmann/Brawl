@@ -40,8 +40,15 @@ public class PlayCardAction extends Move {
         
         if (discard.isEmpty())
             return -1;
-
+        
         Card activeCard = discard.get(discard.size() - 1);
+        List<Base> bases = gameState.getBases();
+        int baseIndex = basePosition.getIndex(bases.size());
+        
+        if (baseIndex == -1)
+            return activeCard.getType() == CardType.BASE ? 3 : -1;
+        
+        Base base = bases.get(baseIndex);
 
         switch (activeCard.getType()) {
             case HIT:
@@ -51,7 +58,9 @@ public class PlayCardAction extends Move {
             case BLOCK:
                 return player == side ? -1 : 2;
             case CLEAR:
+                return player == base.getWinner() ? -1 : 2;
             case FREEZE:
+                return player == base.getWinner() ? 3 : -1;
             case BASE:
             default:
                 return 1;

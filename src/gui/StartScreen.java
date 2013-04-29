@@ -45,8 +45,8 @@ public class StartScreen extends JPanel {
             GameState gameState = new TournamentModeGameState(bennett, darwin);
 
             // Set up the players
-            ComputerPlayer leftPlayer = new ComputerPlayer(Player.LEFT, gameState, 2.2);
-            ComputerPlayer rightPlayer = new ComputerPlayer(Player.RIGHT, gameState, 2.5);
+            ComputerPlayer leftPlayer = new ComputerPlayer(Player.LEFT, gameState, 1.5);
+            ComputerPlayer rightPlayer = new ComputerPlayer(Player.RIGHT, gameState, 2);
 
             // Create a controller that receives input for the left player
             Controller controller = new Controller(gameState);

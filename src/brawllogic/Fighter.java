@@ -3,14 +3,18 @@ package brawllogic;
 import java.awt.Image;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Stack;
 import java.util.StringTokenizer;
+import javax.imageio.ImageIO;
 
 /**
  * @author Patrick Herrmann
@@ -47,6 +51,36 @@ public final class Fighter {
     public Fighter(String theme, String name) {
         this.theme = theme;
         this.name = name;
+        images = new HashMap<String, Image>();
+        
+        loadDeckImages();
+    }
+    
+    private File getDir() {
+        return new File("themes/" + theme + "/" + name);
+    }
+    
+    private File[] getImageFiles() {
+        return getDir().listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.toLowerCase().endsWith(".jpg");
+            }
+        });
+    }
+    
+    private void loadDeckImages() {
+        for (File file : getImageFiles()) {
+            String filename = file.getName();
+            filename = filename.substring(0, filename.lastIndexOf('.'));
+            Image image;
+            try {
+                image = ImageIO.read(file);
+            } catch (IOException ex) {
+                throw new RuntimeException("Couldn't load deck images for " + name);
+            }
+            images.put(filename, image);
+        }
     }
     
     private void handleLine(String line, Player owner, Stack<Card> deck) {
