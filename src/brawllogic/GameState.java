@@ -94,7 +94,7 @@ public abstract class GameState extends Observable {
         bases.remove(baseIndex);
     }
     
-    private GameplayAnalysis canPlayBase(BasePosition basePosition, Card card) {
+    private GameplayAnalysis canPlayBase(BasePosition basePosition) {
         
         if (bases.size() == 3)
             return new GameplayAnalysis(false, "A maximum of three bases can be in play at once.");
@@ -118,7 +118,7 @@ public abstract class GameState extends Observable {
     private GameplayAnalysis canPlayCard(BasePosition basePosition, Card card, Player side) {
         
         if (card.getType() == CardType.BASE) {
-            return canPlayBase(basePosition, card);
+            return canPlayBase(basePosition);
         } else if (card.getType() == CardType.CLEAR) {
             return canClear(basePosition);
         } else {

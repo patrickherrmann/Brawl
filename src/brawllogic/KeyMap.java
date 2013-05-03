@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package brawllogic;
 
 import java.util.HashMap;
@@ -14,7 +9,7 @@ import java.util.Map;
  */
 public class KeyMap {
 
-    public static KeyMap getDefaultKeyMap(Player player) {
+    public static Map<Character, Move> getDefaultKeyMap(Player player) {
 
         Map<Character, Move> moves = new HashMap<Character, Move>();
 
@@ -36,16 +31,6 @@ public class KeyMap {
             moves.put(',', new DrawAction(player));
         }
         
-        return new KeyMap(moves);
-    }
-    
-    private Map<Character, Move> moves;
-
-    public KeyMap(Map<Character, Move> moves) {
-        this.moves = moves;
-    }
-
-    public Map<Character, Move> getMoves() {
         return moves;
     }
 }

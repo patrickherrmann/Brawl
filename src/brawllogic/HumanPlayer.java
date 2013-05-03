@@ -1,14 +1,16 @@
 package brawllogic;
 
+import java.util.Map;
+
 /**
  *
  * @author patrick
  */
 public class HumanPlayer {
 
-    private KeyMap keyMap;
+    private Map<Character, Move> keyMap;
 
-    public HumanPlayer(KeyMap keyMap) {
+    public HumanPlayer(Map<Character, Move> keyMap) {
         this.keyMap = keyMap;
     }
 
@@ -16,7 +18,7 @@ public class HumanPlayer {
 
         synchronized (gameState) {
 
-            Move move = keyMap.getMoves().get(key);
+            Move move = keyMap.get(key);
 
             if (move == null) {
                 return null; // The key is not mapped to any action
